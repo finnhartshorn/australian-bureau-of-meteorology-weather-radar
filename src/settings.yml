@@ -110,6 +110,12 @@ custom_fields:
   - 256 km: '256'
   - 512 km composite: '512'
   default: '128'
+- keyname: author_bio
+  name: About This Plugin
+  field_type: author_bio
+  description: Austrailian BOM radar loop for TRMNL — pick a site and range.
+  github_url: https://github.com/finnhartshorn
+  category: environment,nature
 name: Australian Bureau of Meteorology Weather Radar
 description: Australian BOM Rain RADAR
 refresh_interval: 15
