@@ -1,0 +1,89 @@
+{% assign site_label = "" %}
+
+{% case trmnl.plugin_settings.custom_fields_values.location %}
+    {% when "64" %} {% assign site_label = "Adelaide (Buckland Park), SA" %}
+    {% when "46" %} {% assign site_label = "Adelaide (Sellicks Hill), SA" %}
+    {% when "31" %} {% assign site_label = "Albany, WA" %}
+    {% when "25" %} {% assign site_label = "Alice Springs, NT" %}
+    {% when "68" %} {% assign site_label = "Bairnsdale, VIC" %}
+    {% when "24" %} {% assign site_label = "Bowen, QLD" %}
+    {% when "93" %} {% assign site_label = "Brewarrina, NSW" %}
+    {% when "50" %} {% assign site_label = "Brisbane (Marburg), QLD" %}
+    {% when "66" %} {% assign site_label = "Brisbane (Mt Stapylton), QLD" %}
+    {% when "17" %} {% assign site_label = "Broome, WA" %}
+    {% when "19" %} {% assign site_label = "Cairns, QLD" %}
+    {% when "40" %} {% assign site_label = "Canberra (Captains Flat), NSW" %}
+    {% when "114" %} {% assign site_label = "Carnarvon, WA" %}
+    {% when "33" %} {% assign site_label = "Ceduna, SA" %}
+    {% when "15" %} {% assign site_label = "Dampier, WA" %}
+    {% when "63" %} {% assign site_label = "Darwin (Berrimah), NT" %}
+    {% when "72" %} {% assign site_label = "Emerald, QLD" %}
+    {% when "32" %} {% assign site_label = "Esperance, WA" %}
+    {% when "06" %} {% assign site_label = "Geraldton, WA" %}
+    {% when "44" %} {% assign site_label = "Giles, WA" %}
+    {% when "23" %} {% assign site_label = "Gladstone, QLD" %}
+    {% when "112" %} {% assign site_label = "Gove, NT" %}
+    {% when "28" %} {% assign site_label = "Grafton, NSW" %}
+    {% when "74" %} {% assign site_label = "Greenvale, QLD" %}
+    {% when "36" %} {% assign site_label = "Gulf of Carpentaria (Mornington Is), QLD" %}
+    {% when "08" %} {% assign site_label = "Gympie (Mt Kanigan), QLD" %}
+    {% when "39" %} {% assign site_label = "Halls Creek, WA" %}
+    {% when "94" %} {% assign site_label = "Hillston, NSW" %}
+    {% when "76" %} {% assign site_label = "Hobart (Mt Koonya), TAS" %}
+    {% when "48" %} {% assign site_label = "Kalgoorlie, WA" %}
+    {% when "111" %} {% assign site_label = "Karratha, WA" %}
+    {% when "42" %} {% assign site_label = "Katherine (Tindal), NT" %}
+    {% when "29" %} {% assign site_label = "Learmonth, WA" %}
+    {% when "56" %} {% assign site_label = "Longreach, QLD" %}
+    {% when "22" %} {% assign site_label = "Mackay, QLD" %}
+    {% when "02" %} {% assign site_label = "Melbourne, VIC" %}
+    {% when "97" %} {% assign site_label = "Mildura, VIC" %}
+    {% when "53" %} {% assign site_label = "Moree, NSW" %}
+    {% when "75" %} {% assign site_label = "Mount Isa, QLD" %}
+    {% when "14" %} {% assign site_label = "Mt Gambier, SA" %}
+    {% when "52" %} {% assign site_label = "N.W. Tasmania (West Takone), TAS" %}
+    {% when "69" %} {% assign site_label = "Namoi (Blackjack Mountain), NSW" %}
+    {% when "04" %} {% assign site_label = "Newcastle, NSW" %}
+    {% when "38" %} {% assign site_label = "Newdegate, WA" %}
+    {% when "62" %} {% assign site_label = "Norfolk Island, NSW" %}
+    {% when "70" %} {% assign site_label = "Perth (Serpentine), WA" %}
+    {% when "16" %} {% assign site_label = "Pt Hedland, WA" %}
+    {% when "95" %} {% assign site_label = "Rainbow, VIC" %}
+    {% when "107" %} {% assign site_label = "Richmond, QLD" %}
+    {% when "58" %} {% assign site_label = "South Doodlakine, WA" %}
+    {% when "71" %} {% assign site_label = "Sydney (Terrey Hills), NSW" %}
+    {% when "98" %} {% assign site_label = "Taroom, QLD" %}
+    {% when "108" %} {% assign site_label = "Toowoomba, QLD" %}
+    {% when "106" %} {% assign site_label = "Townsville, QLD" %}
+    {% when "55" %} {% assign site_label = "Wagga Wagga, NSW" %}
+    {% when "67" %} {% assign site_label = "Warrego, QLD" %}
+    {% when "77" %} {% assign site_label = "Warruwi, NT" %}
+    {% when "79" %} {% assign site_label = "Watheroo, WA" %}
+    {% when "78" %} {% assign site_label = "Weipa, QLD" %}
+    {% when "41" %} {% assign site_label = "Willis Island, QLD" %}
+    {% when "03" %} {% assign site_label = "Wollongong (Appin), NSW" %}
+    {% when "27" %} {% assign site_label = "Woomera, SA" %}
+    {% when "07" %} {% assign site_label = "Wyndham, WA" %}
+    {% when "49" %} {% assign site_label = "Yarrawonga, VIC" %}
+    {% when "96" %} {% assign site_label = "Yeoval, NSW" %}
+{% endcase %}
+
+{% assign effective_km = trmnl.plugin_settings.custom_fields_values.range_km %}
+{% unless effective_km == "64" or effective_km == "256" or effective_km == "512" %}
+  {% assign effective_km = "128" %}
+{% endunless %}
+
+{% comment %} not every site publishes 64 km — fall back to 128 km {% endcomment %}
+{% assign no_64km_sites = "07,14,16,23,24,25,27,28,29,36,39,41,42,44,46,53,55,56,62,67,68" | split: "," %}
+{% if effective_km == "64" and no_64km_sites contains trmnl.plugin_settings.custom_fields_values.location %}
+  {% assign effective_km = "128" %}
+{% endif %}
+
+{% case effective_km %}
+  {% when "64" %} {% assign range_digit = "4" %}
+  {% when "128" %} {% assign range_digit = "3" %}
+  {% when "256" %} {% assign range_digit = "2" %}
+  {% when "512" %} {% assign range_digit = "1" %}
+{% endcase %}
+
+{% assign radar_code = "IDR" | append: trmnl.plugin_settings.custom_fields_values.location | append: range_digit %}
