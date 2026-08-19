@@ -1,0 +1,205 @@
+{% comment %}
+  BOM Radar — TRMNL Private Plugin template.
+
+  Paste this YAML into the Private Plugin's form fields box, then paste
+  this file into the Markup box (Full layout tab, reached via "Edit
+  Markup" after saving the plugin with the fields below):
+
+    - keyname: location
+      field_type: select
+      name: Radar location
+      options:
+      - "Adelaide (Buckland Park), SA": "64"
+      - "Adelaide (Sellicks Hill), SA": "46"
+      - "Albany, WA": "31"
+      - "Alice Springs, NT": "25"
+      - "Bairnsdale, VIC": "68"
+      - "Bowen, QLD": "24"
+      - "Brewarrina, NSW": "93"
+      - "Brisbane (Marburg), QLD": "50"
+      - "Brisbane (Mt Stapylton), QLD": "66"
+      - "Broome, WA": "17"
+      - "Cairns, QLD": "19"
+      - "Canberra (Captains Flat), NSW": "40"
+      - "Carnarvon, WA": "114"
+      - "Ceduna, SA": "33"
+      - "Dampier, WA": "15"
+      - "Darwin (Berrimah), NT": "63"
+      - "Emerald, QLD": "72"
+      - "Esperance, WA": "32"
+      - "Geraldton, WA": "06"
+      - "Giles, WA": "44"
+      - "Gladstone, QLD": "23"
+      - "Gove, NT": "112"
+      - "Grafton, NSW": "28"
+      - "Greenvale, QLD": "74"
+      - "Gulf of Carpentaria (Mornington Is), QLD": "36"
+      - "Gympie (Mt Kanigan), QLD": "08"
+      - "Halls Creek, WA": "39"
+      - "Hillston, NSW": "94"
+      - "Hobart (Mt Koonya), TAS": "76"
+      - "Kalgoorlie, WA": "48"
+      - "Karratha, WA": "111"
+      - "Katherine (Tindal), NT": "42"
+      - "Learmonth, WA": "29"
+      - "Longreach, QLD": "56"
+      - "Mackay, QLD": "22"
+      - "Melbourne, VIC": "02"
+      - "Mildura, VIC": "97"
+      - "Moree, NSW": "53"
+      - "Mount Isa, QLD": "75"
+      - "Mt Gambier, SA": "14"
+      - "N.W. Tasmania (West Takone), TAS": "52"
+      - "Namoi (Blackjack Mountain), NSW": "69"
+      - "Newcastle, NSW": "04"
+      - "Newdegate, WA": "38"
+      - "Norfolk Island, NSW": "62"
+      - "Perth (Serpentine), WA": "70"
+      - "Pt Hedland, WA": "16"
+      - "Rainbow, VIC": "95"
+      - "Richmond, QLD": "107"
+      - "South Doodlakine, WA": "58"
+      - "Sydney (Terrey Hills), NSW": "71"
+      - "Taroom, QLD": "98"
+      - "Toowoomba, QLD": "108"
+      - "Townsville, QLD": "106"
+      - "Wagga Wagga, NSW": "55"
+      - "Warrego, QLD": "67"
+      - "Warruwi, NT": "77"
+      - "Watheroo, WA": "79"
+      - "Weipa, QLD": "78"
+      - "Willis Island, QLD": "41"
+      - "Wollongong (Appin), NSW": "03"
+      - "Woomera, SA": "27"
+      - "Wyndham, WA": "07"
+      - "Yarrawonga, VIC": "49"
+      - "Yeoval, NSW": "96"
+      default: "71"
+
+    - keyname: range_km
+      field_type: select
+      name: Range
+      options:
+      - "64 km": "64"
+      - "128 km": "128"
+      - "256 km": "256"
+      - "512 km composite": "512"
+      default: "128"
+
+  The dropdown IS the name-to-code lookup now — its value is the BOM
+  site prefix directly, so there's no text matching or "unknown site"
+  case to handle. Not every site publishes 64 km — falls back to the
+  widest range that site actually has.
+
+  Strategy: Polling, GET https://worldtimeapi.org/api/timezone/Australia/Sydney
+  — its only job is to give TRMNL a changing value each cycle so it
+  doesn't skip regenerating the screen (TRMNL skips regeneration when
+  merge variables are unchanged between requests). Nothing in this
+  template reads the polled data.
+
+  Source: BOM's public radar site tables (nsw/vic/qld/sa/wa/tas/nt
+  _radar_sites_table.shtml), cross-checked live 2026-08-18.
+{% endcomment %}
+
+{% assign site_prefix = trmnl.plugin_settings.custom_fields_values.location | strip %}
+{% comment %} re-pad leading-zero codes (02, 04, 06, 07, 08) — some pipelines
+   strip them from stored select values, e.g. "02" -> "2" {% endcomment %}
+{% assign prefix_len = site_prefix | size %}
+{% if prefix_len == 1 %}
+  {% assign site_prefix = "0" | append: site_prefix %}
+{% endif %}
+{% assign site_label = "" %}
+
+{% case site_prefix %}
+    {% when "64" %} {% assign site_label = "Adelaide (Buckland Park), SA" %}
+    {% when "46" %} {% assign site_label = "Adelaide (Sellicks Hill), SA" %}
+    {% when "31" %} {% assign site_label = "Albany, WA" %}
+    {% when "25" %} {% assign site_label = "Alice Springs, NT" %}
+    {% when "68" %} {% assign site_label = "Bairnsdale, VIC" %}
+    {% when "24" %} {% assign site_label = "Bowen, QLD" %}
+    {% when "93" %} {% assign site_label = "Brewarrina, NSW" %}
+    {% when "50" %} {% assign site_label = "Brisbane (Marburg), QLD" %}
+    {% when "66" %} {% assign site_label = "Brisbane (Mt Stapylton), QLD" %}
+    {% when "17" %} {% assign site_label = "Broome, WA" %}
+    {% when "19" %} {% assign site_label = "Cairns, QLD" %}
+    {% when "40" %} {% assign site_label = "Canberra (Captains Flat), NSW" %}
+    {% when "114" %} {% assign site_label = "Carnarvon, WA" %}
+    {% when "33" %} {% assign site_label = "Ceduna, SA" %}
+    {% when "15" %} {% assign site_label = "Dampier, WA" %}
+    {% when "63" %} {% assign site_label = "Darwin (Berrimah), NT" %}
+    {% when "72" %} {% assign site_label = "Emerald, QLD" %}
+    {% when "32" %} {% assign site_label = "Esperance, WA" %}
+    {% when "06" %} {% assign site_label = "Geraldton, WA" %}
+    {% when "44" %} {% assign site_label = "Giles, WA" %}
+    {% when "23" %} {% assign site_label = "Gladstone, QLD" %}
+    {% when "112" %} {% assign site_label = "Gove, NT" %}
+    {% when "28" %} {% assign site_label = "Grafton, NSW" %}
+    {% when "74" %} {% assign site_label = "Greenvale, QLD" %}
+    {% when "36" %} {% assign site_label = "Gulf of Carpentaria (Mornington Is), QLD" %}
+    {% when "08" %} {% assign site_label = "Gympie (Mt Kanigan), QLD" %}
+    {% when "39" %} {% assign site_label = "Halls Creek, WA" %}
+    {% when "94" %} {% assign site_label = "Hillston, NSW" %}
+    {% when "76" %} {% assign site_label = "Hobart (Mt Koonya), TAS" %}
+    {% when "48" %} {% assign site_label = "Kalgoorlie, WA" %}
+    {% when "111" %} {% assign site_label = "Karratha, WA" %}
+    {% when "42" %} {% assign site_label = "Katherine (Tindal), NT" %}
+    {% when "29" %} {% assign site_label = "Learmonth, WA" %}
+    {% when "56" %} {% assign site_label = "Longreach, QLD" %}
+    {% when "22" %} {% assign site_label = "Mackay, QLD" %}
+    {% when "02" %} {% assign site_label = "Melbourne, VIC" %}
+    {% when "97" %} {% assign site_label = "Mildura, VIC" %}
+    {% when "53" %} {% assign site_label = "Moree, NSW" %}
+    {% when "75" %} {% assign site_label = "Mount Isa, QLD" %}
+    {% when "14" %} {% assign site_label = "Mt Gambier, SA" %}
+    {% when "52" %} {% assign site_label = "N.W. Tasmania (West Takone), TAS" %}
+    {% when "69" %} {% assign site_label = "Namoi (Blackjack Mountain), NSW" %}
+    {% when "04" %} {% assign site_label = "Newcastle, NSW" %}
+    {% when "38" %} {% assign site_label = "Newdegate, WA" %}
+    {% when "62" %} {% assign site_label = "Norfolk Island, NSW" %}
+    {% when "70" %} {% assign site_label = "Perth (Serpentine), WA" %}
+    {% when "16" %} {% assign site_label = "Pt Hedland, WA" %}
+    {% when "95" %} {% assign site_label = "Rainbow, VIC" %}
+    {% when "107" %} {% assign site_label = "Richmond, QLD" %}
+    {% when "58" %} {% assign site_label = "South Doodlakine, WA" %}
+    {% when "71" %} {% assign site_label = "Sydney (Terrey Hills), NSW" %}
+    {% when "98" %} {% assign site_label = "Taroom, QLD" %}
+    {% when "108" %} {% assign site_label = "Toowoomba, QLD" %}
+    {% when "106" %} {% assign site_label = "Townsville, QLD" %}
+    {% when "55" %} {% assign site_label = "Wagga Wagga, NSW" %}
+    {% when "67" %} {% assign site_label = "Warrego, QLD" %}
+    {% when "77" %} {% assign site_label = "Warruwi, NT" %}
+    {% when "79" %} {% assign site_label = "Watheroo, WA" %}
+    {% when "78" %} {% assign site_label = "Weipa, QLD" %}
+    {% when "41" %} {% assign site_label = "Willis Island, QLD" %}
+    {% when "03" %} {% assign site_label = "Wollongong (Appin), NSW" %}
+    {% when "27" %} {% assign site_label = "Woomera, SA" %}
+    {% when "07" %} {% assign site_label = "Wyndham, WA" %}
+    {% when "49" %} {% assign site_label = "Yarrawonga, VIC" %}
+    {% when "96" %} {% assign site_label = "Yeoval, NSW" %}
+{% endcase %}
+
+{% comment %} range_km comes straight from the select's value — always exactly one of these four {% endcomment %}
+{% assign effective_km = trmnl.plugin_settings.custom_fields_values.range_km %}
+{% unless effective_km == "64" or effective_km == "256" or effective_km == "512" %}
+  {% assign effective_km = "128" %}
+{% endunless %}
+
+{% comment %} not every site publishes 64 km — fall back to 128 km {% endcomment %}
+{% assign no_64km_sites = "07,14,16,23,24,25,27,28,29,36,39,41,42,44,46,53,55,56,62,67,68" | split: "," %}
+{% if effective_km == "64" and no_64km_sites contains site_prefix %}
+  {% assign effective_km = "128" %}
+{% endif %}
+
+{% assign range_digit = "3" %}
+{% case effective_km %}
+  {% when "64" %} {% assign range_digit = "4" %}
+  {% when "128" %} {% assign range_digit = "3" %}
+  {% when "256" %} {% assign range_digit = "2" %}
+  {% when "512" %} {% assign range_digit = "1" %}
+{% endcase %}
+
+{% assign radar_code = "IDR" | append: site_prefix | append: range_digit %}
+
+<div class="view view--full">
+  <img class="image image-dither" src="https://www.bom.gov.au/radar/{{ radar_code }}.gif" alt="{{ site_label }} radar, {{ effective_km }} km" style="width: 100%; height: 100%; object-fit: contain;">
+</div>
