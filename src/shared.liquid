@@ -87,3 +87,5 @@
 {% endcase %}
 
 {% assign radar_code = "IDR" | append: trmnl.plugin_settings.custom_fields_values.location | append: range_digit %}
+
+{% assign image_class = trmnl.plugin_settings.custom_fields_values.image_style | default: 'image--cover' %}
