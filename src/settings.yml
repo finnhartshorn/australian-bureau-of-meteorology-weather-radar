@@ -31,6 +31,12 @@ oauth_expiry_field_name: ''
 oauth_expiry_strategy: ''
 oauth_fixed_expiry_ms: ''
 custom_fields:
+- keyname: author_bio
+  name: About This Plugin
+  field_type: author_bio
+  description: Austrailian BOM radar loop for TRMNL — pick a site and range.
+  github_url: https://github.com/finnhartshorn
+  category: environment,nature
 - keyname: location
   field_type: select
   name: Radar location
@@ -110,12 +116,14 @@ custom_fields:
   - 256 km: '256'
   - 512 km composite: '512'
   default: '128'
-- keyname: author_bio
-  name: About This Plugin
-  field_type: author_bio
-  description: Austrailian BOM radar loop for TRMNL — pick a site and range.
-  github_url: https://github.com/finnhartshorn
-  category: environment,nature
+- keyname: image_style
+  name: Image Style
+  field_type: select
+  description: For mashups, should the image be fully visible or fill the screen?
+  options:
+  - Full Image: image--contain
+  - Fill the Screen: image--cover
+  default: image--contain
 name: Australian Bureau of Meteorology Weather Radar
 description: Australian BOM Rain RADAR
 refresh_interval: 15
